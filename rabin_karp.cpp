@@ -33,14 +33,12 @@ void search_rk(string str, string pattern)
     cout << "Found" << endl;
   }
 
-  for (int i = 1; i < (str_len - pattern_len); i++)
+  for (int i = 1; i < (str_len - pattern_len + 1); i++)
   {
     // Calculate new window hash as:
     // H(str[a + 1...m + 1]) = H(str[a..m]) - H(str[a]) + H(str[m + 1])
     window_hash -= (int) str[i - 1];
     window_hash += (int) str[i + pattern_len - 1];
-
-    cout << pattern_hash << " " << window_hash << endl;
 
     // Check if current window hash matches pattern hash
     if (window_hash == pattern_hash)
@@ -56,6 +54,6 @@ void search_rk(string str, string pattern)
 
 int main(int argc, char *argv[])
 {
-  search_rk("abc", "b");
+  search_rk("My name is XYZ", "XYZ");
   return 0;
 }
