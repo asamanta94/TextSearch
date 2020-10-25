@@ -6,7 +6,6 @@
 #include <stdlib.h>
 
 #define D 256
-#define Q 257
 
 using namespace std;
 
@@ -21,39 +20,37 @@ void search_rk(string str, string pattern)
   const char * c_pattern = pattern.c_str();
 
   // Calculate hash for pattern.
-  // H(pattern) = (0 + pattern[0]) % Q + (H(0) * 256 + pattern[1]) % Q + ... + () % Q
+  // H(s) = (s[0] * D ^ (len - 1)) + ... + (s[len - 1] * D ^ (len - len))
   for (int i = 0; i < pattern_len; i++)
   {
-    pattern_hash += (int) pattern[i];
-    window_hash += (int) str[i];
+    pattern_hash += ((int) pattern[i]) * pow(D, pattern_len - i - 1);
+    window_hash += ((int) str[i]) * pow(D, pattern_len - i - 1);
   }
 
-  if (pattern_hash == window_hash)
+  for (int i = 0; i < (str_len - pattern_len + 1); i++)
   {
-    cout << "Found" << endl;
-  }
-
-  for (int i = 1; i < (str_len - pattern_len + 1); i++)
-  {
-    // Calculate new window hash as:
-    // H(str[a + 1...m + 1]) = H(str[a..m]) - H(str[a]) + H(str[m + 1])
-    window_hash -= (int) str[i - 1];
-    window_hash += (int) str[i + pattern_len - 1];
-
     // Check if current window hash matches pattern hash
     if (window_hash == pattern_hash)
     {
       // If hash matches, iterate to check if characters match.
       if (!strncmp(c_str + i, c_pattern, pattern_len))
       {
-        cout << "Found" << endl;
+        cout << "Found at index: " << i << endl;
       }
     }
+
+    // Calculate new window hash as:
+    // H(s[a + 1...m + 1]) = (H(s[a..m]) - H(s[a])) * D + H(str[m + 1])
+    // Multiply D because we're sliding the window and we need to match match
+    // the exponent of the pattern.
+    window_hash -= (((int) str[i]) * pow(D, pattern_len - 1));
+    window_hash *= D;
+    window_hash += ((int) str[i + pattern_len]);
   }
 }
 
 int main(int argc, char *argv[])
 {
-  search_rk("My name is XYZ", "XYZ");
+  search_rk("My name is XYZ XYZ", "XYZ");
   return 0;
 }
