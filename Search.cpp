@@ -11,15 +11,10 @@
 
 using namespace std;
 
-void search_rk(string str, string pattern)
+void search_rk(char * str, unsigned int str_len, char * pattern, unsigned int pattern_len)
 {
-  unsigned int str_len = str.length();
-  unsigned int pattern_len = pattern.length();
   unsigned int window_hash = 0;
   unsigned int pattern_hash = 0;
-
-  const char * c_str = str.c_str();
-  const char * c_pattern = pattern.c_str();
 
   // Calculate hash for pattern.
   // H(s) = (s[0] * D ^ (len - 1)) + ... + (s[len - 1] * D ^ (len - len))
@@ -35,7 +30,7 @@ void search_rk(string str, string pattern)
     if (window_hash == pattern_hash)
     {
       // If hash matches, iterate to check if characters match.
-      if (!strncmp(c_str + i, c_pattern, pattern_len))
+      if (!strncmp(str + i, pattern, pattern_len))
       {
         cout << "Found at index: " << i << endl;
       }

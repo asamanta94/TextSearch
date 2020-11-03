@@ -14,7 +14,11 @@ struct thread_data
 {
   char * file_data;
   char * pattern;
-  int pos;
+
+  unsigned int start_pos;
+  unsigned int end_pos;
+  unsigned int pattern_len;
+
   pthread_t thread;
 };
 

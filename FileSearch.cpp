@@ -58,12 +58,16 @@ void FileSearch::search(char * pattern)
 {
   tdata = new struct thread_data[2];
 
+  unsigned int pattern_len = strlen(pattern);
+
   // Create all the threads and let them run.
   for (int i = 0; i < 2; i++)
   {
     tdata[i].file_data = this->file_data;
     tdata[i].pattern = pattern;
-    tdata[i].pos = i * 2;
+    tdata[i].start_pos = i * 2;
+    tdata[i].end_pos = 5;
+    tdata[i].pattern_len = pattern_len;
 
     if (pthread_create(&(tdata[i].thread), NULL, FileSearch::search_thread, &(tdata[i])))
     {
@@ -87,15 +91,9 @@ void * FileSearch::search_thread(void * data)
 {
   struct thread_data * tdata = (struct thread_data *)data;
 
-  char * begin = (tdata->file_data + tdata->pos);
-  char * pattern = tdata->pattern;
+  char * begin = (tdata->file_data + tdata->start_pos);
 
-  for (int i = 0; i < 10; i++)
-  {
-    cout << *(begin + i);
-  }
-
-  search_rk(begin, pattern);
+  search_rk(begin, (tdata->end_pos - tdata->start_pos), tdata->pattern, tdata->pattern_len);
 
   cout << endl;
 
