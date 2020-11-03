@@ -1,8 +1,8 @@
 CC=g++
 OUT=search
 
-rk: rabin_karp.cpp
-	$(CC) -o $(OUT) rabin_karp.cpp
+fs: Search.cpp FileSearch.cpp
+	$(CC) -o $(OUT) Search.cpp FileSearch.cpp
 
 clean:
 	rm -rf $(OUT)

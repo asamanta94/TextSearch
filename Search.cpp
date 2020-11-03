@@ -5,6 +5,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "Search.h"
+
 #define D 256
 
 using namespace std;
@@ -47,10 +49,4 @@ void search_rk(string str, string pattern)
     window_hash *= D;
     window_hash += ((int) str[i + pattern_len]);
   }
-}
-
-int main(int argc, char *argv[])
-{
-  search_rk("My name is XYZ XYZ", "XYZ");
-  return 0;
 }
