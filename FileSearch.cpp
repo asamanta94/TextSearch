@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "FileSearch.h"
 #include "Search.h"
@@ -61,6 +62,10 @@ void FileSearch::search(char * pattern)
   unsigned int pattern_len = strlen(pattern);
   unsigned int text_len = strlen(this->file_data);
   unsigned int block_sz = (text_len / N_THREADS);
+  vector<unsigned int> positions;
+
+  // Initialize mutex before passing.
+  pthread_mutex_init(&(this->mutex), NULL);
 
   // Create all the threads and let them run.
   for (int i = 0; i < N_THREADS; i++)
@@ -70,6 +75,8 @@ void FileSearch::search(char * pattern)
     tdata[i].start_pos = i * block_sz;
     tdata[i].end_pos = tdata[i].start_pos + block_sz;
     tdata[i].pattern_len = pattern_len;
+    tdata[i].positions = &positions;
+    tdata[i].mutex = &(this->mutex);
 
     if (pthread_create(&(tdata[i].thread), NULL, FileSearch::search_thread, &(tdata[i])))
     {
@@ -83,7 +90,16 @@ void FileSearch::search(char * pattern)
     pthread_join(tdata[i].thread, NULL);
   }
 
+  // Destroy the mutex.
+  pthread_mutex_destroy(&(this->mutex));
+
   delete tdata;
+
+  // Print results
+  for (int i = 0; i < positions.size(); i++)
+  {
+    cout << "Found at " << positions[i] << "." << endl;
+  }
 }
 
 /**
@@ -95,7 +111,16 @@ void * FileSearch::search_thread(void * data)
 
   char * begin = (tdata->file_data + tdata->start_pos);
 
-  search_rk(begin, (tdata->end_pos - tdata->start_pos), tdata->pattern, tdata->pattern_len);
+  vector<unsigned int> local_positions;
+
+  search_rk(begin, (tdata->end_pos - tdata->start_pos), tdata->pattern, tdata->pattern_len, local_positions);
+
+  for (int i = 0; i < local_positions.size(); i++)
+  {
+    pthread_mutex_lock(tdata->mutex);
+    tdata->positions->push_back(tdata->start_pos + local_positions[i]);
+    pthread_mutex_unlock(tdata->mutex);
+  }
 
   return NULL;
 }

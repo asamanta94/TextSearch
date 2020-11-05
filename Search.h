@@ -5,6 +5,6 @@
 
 using namespace std;
 
-void search_rk(char * str, unsigned int str_len, char * pattern, unsigned int pattern_len);
+void search_rk(char * str, unsigned int str_len, char * pattern, unsigned int pattern_len, vector<unsigned int> &positions);
 
 #endif

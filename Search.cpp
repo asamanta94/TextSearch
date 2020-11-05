@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void search_rk(char * str, unsigned int str_len, char * pattern, unsigned int pattern_len)
+void search_rk(char * str, unsigned int str_len, char * pattern, unsigned int pattern_len, vector<unsigned int> &positions)
 {
   unsigned int window_hash = 0;
   unsigned int pattern_hash = 0;
@@ -32,7 +32,7 @@ void search_rk(char * str, unsigned int str_len, char * pattern, unsigned int pa
       // If hash matches, iterate to check if characters match.
       if (!strncmp(str + i, pattern, pattern_len))
       {
-        cout << "Found at index: " << i << endl;
+        positions.push_back(i);
       }
     }
 

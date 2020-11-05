@@ -20,6 +20,8 @@ struct thread_data
   unsigned int pattern_len;
 
   pthread_t thread;
+  pthread_mutex_t * mutex;
+  vector<unsigned int> * positions;
 };
 
 class FileSearch
@@ -30,6 +32,7 @@ class FileSearch
   unsigned int file_size;
 
   /* Thread information */
+  pthread_mutex_t mutex;
   struct thread_data * tdata;
 
 public:
